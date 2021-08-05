@@ -180,11 +180,7 @@ mainBridge.append(article);
 function renderFiltersSection(breweries) {
   // console.log("Inside renderFiltersSection: ", breweries);
 
-  for (let i = 0; i < breweries.length; i++){
-
-    const brewery =  breweries[i];
-
-    const filtersAsideEl = document.createElement("aside"); 
+      const filtersAsideEl = document.createElement("aside"); 
     filtersAsideEl.className = "filters-section";
 
     const headingEl = document.createElement("h2");
@@ -202,7 +198,6 @@ function renderFiltersSection(breweries) {
     const labelHeadingEl = document.createElement("h3");
     labelHeadingEl.innerText = ("Type of Brewery")
     labelEl.append(labelHeadingEl);
-
 
     const selectEl = document.createElement("select");
     selectEl.setAttribute("name", "filter-by-type");
@@ -243,9 +238,12 @@ function renderFiltersSection(breweries) {
     buttonEl.innerText = "clear all";
     divEl.append(buttonEl);
     filtersAsideEl.append(divEl);
-
     const filterByCityFormEl = document.createElement("form");
     filterByCityFormEl.setAttribute("id", "filter-by-city-form");
+
+  for (let i = 0; i < breweries.length; i++){
+
+    const brewery =  breweries[i];
     
     const inputOneEl = document.createElement("input");
     inputOneEl.setAttribute("type", "checkbox");
@@ -260,5 +258,5 @@ function renderFiltersSection(breweries) {
 
     filtersAsideEl.append(filterByCityFormEl);
     mainBridge.append(filtersAsideEl);
-  }
+    }
 };
