@@ -180,7 +180,7 @@ mainBridge.append(article);
 function renderFiltersSection(breweries) {
   // console.log("Inside renderFiltersSection: ", breweries);
 
-      const filtersAsideEl = document.createElement("aside"); 
+    const filtersAsideEl = document.createElement("aside"); 
     filtersAsideEl.className = "filters-section";
 
     const headingEl = document.createElement("h2");
