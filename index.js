@@ -1,8 +1,20 @@
+    let state = {
+      selectStateInput: "",
+      breweries: [],    
+      cities: [],
+      filters: {
+      type: "",
+      city: [],
+      search: ""
+  }
+};
+
 //Bridge to the Form
 const formEl = document.getElementById('select-state-form');
 
 // Bridge to the List of Breweries 
 const mainBridge = document.querySelector("main");
+
 
 // add eventListener 
 formEl.addEventListener("submit", (event) => {
@@ -13,44 +25,18 @@ formEl.addEventListener("submit", (event) => {
   const userValue = userInput.value.split(" ").join("_");
   console.log(userValue);
 
-  fetch(`https://api.openbrewerydb.org/breweries?by_state=${userValue}`)
+  fetch(`https://api.openbrewerydb.org/breweries?by_state=${userValue}&per_page=50`)
   .then((res) => res.json())
-  .then((breweries) => {
-    console.log("Inside GET Fetch: ", breweries);
- 
-//     let state = {
-//       selectStateInput: "",
-//       breweries: [],    
-//       cities: [],
-//       filters: {
-//       type: "",
-//       city: [],
-//       search: ""
-//   }
-// };
+  .then((breweriesData) => {
+    console.log("Inside GET Fetch: ", breweriesData);
 
-// Search input value
-    //   const formSearchEl = document.getElementById('#search-breweries-form');
-    //   const searchInput = formSearchEl.querySelector("#search-breweries");
-    //   const userSearchValue = searchInput.value;
+    state = {
+      ...state,
+      breweries: breweriesData
+    };
 
-    // for (let i = 0; i < breweries.length; i++) {
-
-    //   const brewery = breweries[i];
-
-    //       state.selectStateInput = `${userValue}`;
-    //       state.cities.push({...brewery.city});
-    //       state.breweries.push({...brewery.name});
-    //       state.cities.push({...brewery.city});
-    //       state.filters.type.push({...brewery.brewery_type});
-    //       state.filters.city.push({...brewery.city});
-
-    //       state.filters.search = userSearchValue;
-    // }
-
-    const breweryList = renderBreweriesList(breweries);
-
-    const breweryFilters = renderFiltersSection(breweries);
+renderBreweriesList(state.breweries);
+renderFiltersSection(state.breweries);
 
   }); 
 
@@ -64,6 +50,8 @@ formEl.reset()
 
 function renderBreweriesList(breweries) {
  // console.log("Inside renderBreweriesList: ", breweries);
+
+ mainBridge.innerHTML = "";
 
 const headingList = document.createElement("h1");
 headingList.innerText = "List of Breweries";
@@ -92,16 +80,30 @@ form.addEventListener("submit", (event) => {
   //  console.log("clicked");
    event.preventDefault()
   
-  const userCityValue = inputForm.value.split(" ").join("_");
+  const userCityValue = inputForm.value;
+
+         state = {
+      ...state,
+      filters: {
+        ...state.filters,
+        search: userCityValue
+      } 
+    };
+    
+const filterCity = state.filters;
+let filteredByCity = state.breweries;
+
+    filteredByCity = state.breweries.filter(
+      (brewery) => brewery["city"].toLowerCase() === filterCity.search.toLowerCase() || brewery["name"].toLowerCase() === filterCity.search.toLowerCase()
+
+    );
+
+
+    renderBreweriesList(filteredByCity)
+    renderFiltersSection(state.breweries);
+
   
-  fetch(`https://api.openbrewerydb.org/breweries?by_city=${userCityValue}`)
-  .then((res) => res.json())
-  .then((breweriesbyState) => {
-    console.log("Inside GET Fetch: ", breweriesbyState);
-
-    const breweryList = renderBreweriesList(breweriesbyState);
-
-  }); 
+// method filter - put inside array - render the breweries list with new array // map instead of filter 
 
 formEl.reset()
 
@@ -223,6 +225,34 @@ function renderFiltersSection(breweries) {
     optionFourEl.innerText = ("Brewpub")
     selectEl.append(optionFourEl);
 
+    // Event Listener 
+
+    selectEl.addEventListener("change", (event) => {
+      const filteredValue = event.target.value;
+
+       state = {
+      ...state,
+      filters: {
+        ...state.filters,
+        type: filteredValue
+        
+      } 
+    };
+    
+    
+ const filters = state.filters;
+ let filteredByType = state.breweries;
+
+    filteredByType = state.breweries.filter(
+      (brewery) => brewery["brewery_type"] === filters.type
+    );
+
+    renderBreweriesList(filteredByType)
+    renderFiltersSection(state.breweries);
+
+    });
+
+
     filterByTypeFormEL.append(selectEl);
 
 
@@ -255,6 +285,39 @@ function renderFiltersSection(breweries) {
     inputOneLabelEl.setAttribute("for", `${brewery.city}`); 
     inputOneLabelEl.innerText = `${brewery.city}`; 
     filterByCityFormEl.append(inputOneLabelEl);
+
+    inputOneEl.addEventListener("click", (event) => {
+  //  console.log("clicked");
+  
+  // if(String(inputOneEl.value) === `${brewery.city}`){
+
+  //         state = {
+  //     ...state,
+  //     filters: {
+  //       ...state.filters,
+  //       city: [`${inputOneEl.value}`]
+  //     } 
+  //   };
+
+  // }
+
+console.log(state.filters.city);
+
+  // console.log(inputOneEl.value);
+
+  //state.filter.city
+    
+// const filterCity = state.filters;
+// let filteredByCity = state.breweries;
+
+//     filteredByCity = state.breweries.filter(
+//       (brewery) => brewery["city"].toLowerCase() === filterCity.search.toLowerCase()
+
+//       //state.filter.city  -- .includes
+
+//  renderBreweriesList()
+
+    });
 
     filtersAsideEl.append(filterByCityFormEl);
     mainBridge.append(filtersAsideEl);
